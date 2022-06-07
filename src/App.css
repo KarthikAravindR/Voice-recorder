@@ -55,20 +55,19 @@ h1 {
 .recorderWrapper {
   width: 50%;
   margin: 20px auto;
+  display: grid;
+  grid-gap: 1rem;
+  place-items: center;
 }
 
-._1lB9c {
-  height: 0px;
-  padding: 0 !important;
+.recorderWrapper > p{
+  color: red
 }
 
-._3bC73 {
-  background-color: #393f4f;
-  border-radius: 12px !important;
-}
-
-._dt3-T {
-  border-radius: 12px !important;
+.recorderWrapper > button{
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: none;
 }
 
 @keyframes blink {

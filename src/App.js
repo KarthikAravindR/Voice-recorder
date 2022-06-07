@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { DropDown } from "./components/dropdown";
-import { Recorder } from "react-voice-recorder";
-import "react-voice-recorder/dist/index.css";
+import { ReactMediaRecorder } from "react-media-recorder";
 
 import "./App.css";
 
@@ -27,17 +26,6 @@ function App() {
   const [fromLanguage, setFromLanguage] = useState(null);
   const [toLanguage, setToLanguage] = useState(null);
 
-  const [audioDetails, setAudioDetails] = useState({
-    url: null,
-    blob: null,
-    chunks: null,
-    duration: {
-      h: 0,
-      m: 0,
-      s: 0,
-    },
-  });
-
   const fromLanguageHandler = (event) => {
     setFromLanguage(event.target.value);
   };
@@ -45,31 +33,17 @@ function App() {
     setToLanguage(event.target.value);
   };
 
-  const handleAudioStop = (data) => {
-    // console.log(data);
-    setAudioDetails(data);
-  };
-
-  const handleAudioUpload = (file) => {
-    console.log(file, audioDetails);
-  };
-
-  const handleCountDown = (data) => {
-    console.log(data);
-  };
-
-  const handleReset = () => {
-    const reset = {
-      url: null,
-      blob: null,
-      chunks: null,
-      duration: {
-        h: 0,
-        m: 0,
-        s: 0,
-      },
-    };
-    setAudioDetails(reset);
+  const handleAudioUpload = (fileUrl, file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("from", fromLanguage);
+    formData.append("to", toLanguage);
+    fetch("http://localhost:8000/translate", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => console.log("data", data));
   };
 
   return (
@@ -89,19 +63,22 @@ function App() {
           onChangeHandler={toLanguageHandler}
         />
       </div>
-      {fromLanguage && toLanguage && (
-        <div className="recorderWrapper">
-          <Recorder
-            record={true}
-            audioURL={audioDetails.url}
-            showUIAudio
-            handleAudioStop={(data) => handleAudioStop(data)}
-            handleAudioUpload={(data) => handleAudioUpload(data)}
-            handleCountDown={(data) => handleCountDown(data)}
-            handleReset={() => handleReset()}
-            mimeTypeToUseWhenRecording={`audio/webm`}
-          />
-        </div>
+      {true && (
+        <ReactMediaRecorder
+          audio
+          onStop={(blobUrl, blob) => handleAudioUpload(blobUrl, blob)}
+          mediaRecorderOptions={{ mimeType: "audio/wav" }}
+          render={({ status, startRecording, stopRecording, mediaBlobUrl }) => {
+            return (
+              <div className="recorderWrapper">
+                <p>{status}</p>
+                <button onClick={startRecording}>Start Recording</button>
+                <button onClick={stopRecording}>Stop Recording</button>
+                <audio src={mediaBlobUrl} controls autoPlay loop />
+              </div>
+            );
+          }}
+        />
       )}
     </div>
   );
