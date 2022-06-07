@@ -70,6 +70,23 @@ h1 {
   border: none;
 }
 
+.dataWrapper {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.elementWrapper {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid #12161f;
+}
+
+.lightBorder {
+  border: 1px solid #343945;
+}
+
 @keyframes blink {
   0% {
     opacity: 0;

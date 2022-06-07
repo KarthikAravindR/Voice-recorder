@@ -25,6 +25,7 @@ const languages = [
 function App() {
   const [fromLanguage, setFromLanguage] = useState(null);
   const [toLanguage, setToLanguage] = useState(null);
+  const [translatedData, setTranslatedData] = useState([]);
 
   const fromLanguageHandler = (event) => {
     setFromLanguage(event.target.value);
@@ -43,7 +44,7 @@ function App() {
       body: formData,
     })
       .then((response) => response.json())
-      .then((data) => console.log("data", data));
+      .then((data) => setTranslatedData((state) => [...state, data]));
   };
 
   return (
@@ -63,7 +64,7 @@ function App() {
           onChangeHandler={toLanguageHandler}
         />
       </div>
-      {true && (
+      {fromLanguage && toLanguage && (
         <ReactMediaRecorder
           audio
           onStop={(blobUrl, blob) => handleAudioUpload(blobUrl, blob)}
@@ -79,6 +80,20 @@ function App() {
             );
           }}
         />
+      )}
+      {translatedData.length > 0 && (
+        <div className="dataWrapper">
+          <div className="elementWrapper">
+            <div>Recognized Speech</div>
+            <div>Translated Sentence</div>
+          </div>
+          {translatedData.map((data, index) => (
+            <div key={index} className="elementWrapper lightBorder">
+              <div>{data.RecognizedSpeech}</div>
+              <div>{data.translated}</div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
